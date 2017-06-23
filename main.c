@@ -2,6 +2,7 @@
 
 int main(void) 
 {
-	printf("Hello, world!\n");
-	print_menu();
+	//print_menu();
+	// filename: musicPlayList.csv
+	load("musicPlayList.csv");
 }

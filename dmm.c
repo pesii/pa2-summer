@@ -21,3 +21,48 @@ void print_menu(void)
 	printf("\t11: Exit\n");
 
 }
+
+void load(char *filename)
+{
+	FILE *infile = NULL;
+	char line[100], *token;
+	
+	infile = fopen(filename, "r");
+	if(infile == NULL) {
+		printf("Error\n");
+		exit(1);
+	}
+	
+	while (!feof(infile)) {
+		fgets(line, 100, infile);
+		token = strtok(line, ",");
+
+		char *tmp = strchr(line, '\"');
+		if (tmp != NULL) {
+			token = strtok(NULL, ",");
+			if (token != NULL) 
+				printf("%s\n", token);
+	
+			token = strtok(NULL, ",");
+			if (token != NULL) 
+				printf("%s\n", token);
+	
+			token = strtok(NULL, ",");
+			if (token != NULL) 
+				printf("%s\n", token);		
+		} else {
+	/*
+			if(token != NULL) {
+				printf("%s ", token);
+			}
+		
+			token = strtok(NULL, ",");
+			if(token != NULL) {
+				printf("%s\n", token);
+			}
+		*/
+		}
+	}
+	
+}
+
