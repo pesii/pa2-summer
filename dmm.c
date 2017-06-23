@@ -45,11 +45,7 @@ void load(char *filename)
 	
 			token = strtok(NULL, ",");
 			if (token != NULL) 
-				printf("%s\n", token);
-	
-			token = strtok(NULL, ",");
-			if (token != NULL) 
-				printf("%s\n", token);		
+				printf("%s\n", token);	
 		} else {
 	/*
 			if(token != NULL) {
