@@ -5,26 +5,38 @@
 #include <stdlib.h> /* malloc, 			*/
 #include <string.h> /* strtok, 			*/
 
+#define TERMINATING_CHARACTER_SPACE 1
 
-void print_menu();
-void load();
-
-typedef struct duration {
+typedef struct duration 
+{
 	int minutes;
 	int seconds;
-} Duration; 
+} Duration;
 
-typedef struct playlist {
+typedef struct record 
+{
 	char *artist;
 	char *album_title;
 	char *song_title;
 	char *genre; 
 	Duration song_length; 
 	int times_played;
-	
-	// Doubly Linked list previous and next addresses
-	struct node *prev;
+	int rating;
+} Record;
+
+typedef struct node
+{
+	Record Data;
+	//Pointers to previous and next node
+	struct node *prev;	
 	struct node *next;
-} Playlist; 
+} Node;
+
+
+void print_menu();
+void load();
+char *concatenate();
+Node *createNode();
+
 
 #endif
