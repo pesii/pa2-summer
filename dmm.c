@@ -66,6 +66,31 @@ Node *createNode(Record newRecord) // borrowed
 	return pMem; // borrowed
 }
 
+/* Checks if the field Artist Name is separated by a comma.
+ * If so, it breaks the field into two, then concatenates them,
+ * otherwise it returns NULL
+ */
+char *checkArtistName(char *name) 
+{
+	char delimiter = '\"';
+	char *isOneField, *token;
+	
+	/* strchr returns NULL if delimiter is NOT in name */
+	isOneField = strchr(name, delimiter);
+	if (isOneField) { /* If delimiter is in the string */
+		// Second portion of the first field for artist name
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			char *portionNameTwo = concatenate(",", token);
+			
+			/* Store artist's fullname in one string */
+			return concatenate(name, portionNameTwo);
+		}
+	} else {
+		return NULL;
+	}
+}
+
 void load(char *filename)
 {
 	Record Data;
@@ -80,86 +105,65 @@ void load(char *filename)
 	}
 	
 	char *delim_1 = ",";
-	char delim_2 = '\"';
 	
 	while (!feof(infile)) {
 		fgets(line, 90, infile);
 		
-		// First field
+		// Artist name field
 		token = strtok(line, ",");
 		if (token != NULL) {
-			//printf("%s", token);
-		}
-		char *portionNameOne;
-		portionNameOne = token;
 		
-
-		/* Checks if a single field is separated by a comma, then cocatenates the strings
-		 * portionName and the new token, else just stores the old token for artist name
-		 */
-		char *isOneField = strchr(line, delim_2);
-		if (isOneField != NULL) {
-			// Second portion of the first field for artist name
-			token = strtok(NULL, ",");
-			if (token != NULL) {
-				char *portionNameTwo = concatenate(",", token);
-				/* stores artist's fullname in one string */
-				Data.artist = concatenate(portionNameOne, portionNameTwo);
+			char *portionNameOne;
+			portionNameOne = token;
+		
+			/* Checks artist name if there's a second delimiter */
+			Data.artist = checkArtistName(token);
+			if(Data.artist == NULL) {
+				Data.artist = portionNameOne;
 			}
-		} else {
-			Data.artist = portionNameOne;
 		}
+		
 		
 		/* Album name field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			//printf("%s\n", token);
 			Data.album_title = token;
 		}
 		
 		/* Song title field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			//printf("%s\n", token);
 			Data.song_title = token;
 		}
 
 		/* Genre field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			//printf("%s\n", token);
 			Data.genre = token;
 		}
 		
 		/* Song length field */
-		token = strtok(NULL, ":");
-		// first token gets the minutes
+		token = strtok(NULL, ":"); // length in minutes
 		if (token != NULL) {
-			//printf("%d\n", atoi(token));
 			Data.song_length.minutes = atoi(token);
 			
-			// second token gets the seconds
-			token = strtok(NULL, ",");
-			//printf("%d\n\n", atoi(token));
+			token = strtok(NULL, ","); // length in seconds
 			Data.song_length.seconds = atoi(token);
 		}
 
 		/* Times played field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			//printf("%s\n", token);
 			Data.times_played = atoi(token);
 		}
 		
 		/* Ratings field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			//printf("%s\n", token);
 			Data.rating = atoi(token);
 		}
 		
 		createNode(Data);
-		//putchar('\n');
 	}
 
 }
