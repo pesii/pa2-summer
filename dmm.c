@@ -49,24 +49,69 @@ char *concatenate(char *str1, char *str2)
  */
 Node *createNode(Record newRecord) // borrowed
 {
-	Node *pMem = NULL; // borrowed
+	Node *newNode = NULL; // borrowed
 	// Allocate memory for our data
-	pMem = (Node *) malloc(sizeof(Node));
-	if(pMem != NULL) { // borrowed
+	newNode = malloc(sizeof(*newNode));
+	if(newNode != NULL) { // borrowed
 		// Store our data to the linked list
-		pMem->next = NULL; // This line in particular was borrowed
-		pMem->Data.artist = newRecord.artist; // These were not.
-		pMem->Data.album_title = newRecord.album_title;
-		pMem->Data.song_title = newRecord.song_title;
-		pMem->Data.genre = newRecord.genre;
-		pMem->Data.song_length.minutes = newRecord.song_length.minutes;
-		pMem->Data.times_played = newRecord.times_played;
+		newNode->next = NULL; // This line in particular was borrowed
+		
+		newNode->Data.artist = newRecord.artist; // These were not.
+		newNode->Data.album_title = newRecord.album_title;
+		newNode->Data.song_title = newRecord.song_title;
+		newNode->Data.genre = newRecord.genre;
+		newNode->Data.song_length.minutes = newRecord.song_length.minutes;
+		newNode->Data.song_length.seconds = newRecord.song_length.seconds;
+		newNode->Data.times_played = newRecord.times_played;
+		newNode->Data.rating = newRecord.rating;
 	}
+	//newNode->next = malloc(sizeof(*newNode));
 	
-	return pMem; // borrowed
+	return newNode; // borrowed
 }
 
-/* Checks if the field Artist Name is separated by a comma.
+void insert(Record data)
+{	
+	if (head == NULL) {
+		head = createNode(data);
+		traverse = head;
+	} else {
+		traverse = createNode(data);
+	}
+	
+	traverse->next=NULL;
+	//traverse = traverse->next;
+	//traverse = pMem;
+	//traverse->next = malloc(sizeof(*traverse));
+	//traverse->next = NULL;	
+	//printf("traverse (addr): %x\n", traverse);
+	
+	printf("head (addr): %x\n", head);
+	printf("traverse (addr): %x\n", traverse);
+	
+}
+
+void Print(Node *list)
+{
+	while(list != NULL) {
+	/*
+		printf("Artist: %s\n", list->Data.artist);
+		printf("Album: %s\n", list->Data.album_title);
+		printf("Song: %s\n", list->Data.song_title);
+		printf("Genre: %s\n", list->Data.genre);
+		printf("Length: %d:", list->Data.song_length.minutes);
+		printf("%d\n", list->Data.song_length.seconds);
+		printf("Times Played: %d\n", list->Data.times_played);
+		printf("Rating: %d\n", list->Data.rating);
+	*/
+		printf("list (addr): %x\n", list);
+		list = list->next;
+		putchar('\n');
+	}
+}
+
+
+/* Checks if the field Artist Name is separated  by a comma.
  * If so, it breaks the field into two, then concatenates them,
  * otherwise it returns NULL
  */
@@ -83,7 +128,7 @@ char *checkArtistName(char *name)
 		if (token != NULL) {
 			char *portionNameTwo = concatenate(",", token);
 			
-			/* Store artist's fullname in one string */
+			/* Returns artist's fullname in one string */
 			return concatenate(name, portionNameTwo);
 		}
 	} else {
@@ -93,78 +138,7 @@ char *checkArtistName(char *name)
 
 void load(char *filename)
 {
-	Record Data;
-
-	FILE *infile = NULL;
-	char line[100], *token;
 	
-	infile = fopen(filename, "r");
-	if(infile == NULL) {
-		printf("Error\n");
-		exit(1);
-	}
-	
-	char *delim_1 = ",";
-	
-	while (!feof(infile)) {
-		fgets(line, 90, infile);
-		
-		// Artist name field
-		token = strtok(line, ",");
-		if (token != NULL) {
-		
-			char *portionNameOne;
-			portionNameOne = token;
-		
-			/* Checks artist name if there's a second delimiter */
-			Data.artist = checkArtistName(token);
-			if(Data.artist == NULL) {
-				Data.artist = portionNameOne;
-			}
-		}
-		
-		
-		/* Album name field */
-		token = strtok(NULL, ",");
-		if (token != NULL) {
-			Data.album_title = token;
-		}
-		
-		/* Song title field */
-		token = strtok(NULL, ",");
-		if (token != NULL) {
-			Data.song_title = token;
-		}
-
-		/* Genre field */
-		token = strtok(NULL, ",");
-		if (token != NULL) {
-			Data.genre = token;
-		}
-		
-		/* Song length field */
-		token = strtok(NULL, ":"); // length in minutes
-		if (token != NULL) {
-			Data.song_length.minutes = atoi(token);
-			
-			token = strtok(NULL, ","); // length in seconds
-			Data.song_length.seconds = atoi(token);
-		}
-
-		/* Times played field */
-		token = strtok(NULL, ",");
-		if (token != NULL) {
-			Data.times_played = atoi(token);
-		}
-		
-		/* Ratings field */
-		token = strtok(NULL, ",");
-		if (token != NULL) {
-			Data.rating = atoi(token);
-		}
-		
-		createNode(Data);
-	}
 
 }
 

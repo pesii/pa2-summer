@@ -18,8 +18,8 @@ typedef struct record
 	char *artist;
 	char *album_title;
 	char *song_title;
-	char *genre; 
-	Duration song_length; 
+	char *genre;
+	Duration song_length;
 	int times_played;
 	int rating;
 } Record;
@@ -28,14 +28,22 @@ typedef struct node
 {
 	Record Data;
 	//Pointers to previous and next node
-	struct node *prev;	
+	struct node *prev;
 	struct node *next;
 } Node;
 
 
+struct node *head;
+struct node *traverse;
+struct node *tail;
+
+
 void print_menu();
 void load();
+void insert();
+void Print();
 char *concatenate();
+char *checkArtistName();
 Node *createNode();
 
 
