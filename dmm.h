@@ -35,7 +35,7 @@ typedef struct node
 
 struct node *head;
 struct node *traverse;
-struct node *tail;
+struct node *test;
 
 
 void print_menu();

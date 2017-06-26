@@ -54,7 +54,8 @@ Node *createNode(Record newRecord) // borrowed
 	newNode = malloc(sizeof(*newNode));
 	if(newNode != NULL) { // borrowed
 		// Store our data to the linked list
-		newNode->next = NULL; // This line in particular was borrowed
+		//newNode->next = NULL; // This line in particular was borrowed
+		
 		
 		newNode->Data.artist = newRecord.artist; // These were not.
 		newNode->Data.album_title = newRecord.album_title;
@@ -64,37 +65,28 @@ Node *createNode(Record newRecord) // borrowed
 		newNode->Data.song_length.seconds = newRecord.song_length.seconds;
 		newNode->Data.times_played = newRecord.times_played;
 		newNode->Data.rating = newRecord.rating;
+		
 	}
+	
 	//newNode->next = malloc(sizeof(*newNode));
 	
 	return newNode; // borrowed
 }
 
-void insert(Record data)
+void insert(List *collection, Record Data)
 {	
+	//Node *mem = NULL;
 	if (head == NULL) {
-		head = createNode(data);
+		head = createNode(Data);
 		traverse = head;
-	} else {
-		traverse = createNode(data);
 	}
-	
-	traverse->next=NULL;
-	//traverse = traverse->next;
-	//traverse = pMem;
-	//traverse->next = malloc(sizeof(*traverse));
-	//traverse->next = NULL;	
-	//printf("traverse (addr): %x\n", traverse);
-	
-	printf("head (addr): %x\n", head);
-	printf("traverse (addr): %x\n", traverse);
-	
+
 }
 
 void Print(Node *list)
 {
 	while(list != NULL) {
-	/*
+	
 		printf("Artist: %s\n", list->Data.artist);
 		printf("Album: %s\n", list->Data.album_title);
 		printf("Song: %s\n", list->Data.song_title);
@@ -103,8 +95,8 @@ void Print(Node *list)
 		printf("%d\n", list->Data.song_length.seconds);
 		printf("Times Played: %d\n", list->Data.times_played);
 		printf("Rating: %d\n", list->Data.rating);
-	*/
-		printf("list (addr): %x\n", list);
+	
+		//printf("list (addr): %x\n", list);
 		list = list->next;
 		putchar('\n');
 	}

@@ -5,8 +5,7 @@ int main(void)
 	//print_menu();
 	// filename: musicPlayList.csv
 	//load("musicPlayList.csv");
-	Record Data;
-
+	
 	FILE *infile = NULL;
 	char line[100], *token, *filename = "musicPlayList.csv";
 	
@@ -17,12 +16,13 @@ int main(void)
 	}
 	
 	char *delim_1 = ",";
-	
+
 	/* while(!feof(file)) enters the loop an extra time than I like
+	 * while(fgets()) does the job better as it exits once it can't read any more lines
 	 */
 	while (fgets(line,100,infile) != NULL) {
 		//fgets(line, 90, infile);
-		
+		Record Data;
 		// Artist name field
 		token = strtok(line, ",");
 		if (token != NULL) {
@@ -80,17 +80,12 @@ int main(void)
 		}
 		
 		insert(Data);
-	}
-	Node *test;
-	test = head;
-	Print(test);
-	//printf("%s\n", head->Data.artist);
-	//head = head->next;
-	//printf("%s\n", head->Data.artist);
 
-	/*
-	char *test;
-	test = concatenate("hi", " there");
-	printf("%s\n", test);
-	*/
+	}
+	
+	
+	
+	
+	
+	
 }
