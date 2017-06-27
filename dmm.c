@@ -47,16 +47,15 @@ char *concatenate(char *str1, char *str2)
  * This function allocates memory to store data extracted from a CSV file for the 
  * digital music manager.
  */
+ 
 Node *createNode(Record newRecord) // borrowed
 {
-	Node *newNode = NULL; // borrowed
+	Node *newNode; // borrowed
 	// Allocate memory for our data
 	newNode = malloc(sizeof(*newNode));
-	if(newNode != NULL) { // borrowed
-		// Store our data to the linked list
+	if (newNode != NULL) {
+		//Store our data to the linked list
 		//newNode->next = NULL; // This line in particular was borrowed
-		
-		
 		newNode->Data.artist = newRecord.artist; // These were not.
 		newNode->Data.album_title = newRecord.album_title;
 		newNode->Data.song_title = newRecord.song_title;
@@ -65,28 +64,36 @@ Node *createNode(Record newRecord) // borrowed
 		newNode->Data.song_length.seconds = newRecord.song_length.seconds;
 		newNode->Data.times_played = newRecord.times_played;
 		newNode->Data.rating = newRecord.rating;
-		
 	}
 	
-	//newNode->next = malloc(sizeof(*newNode));
 	
+	//newNode->next = malloc(sizeof(*newNode));
+	//printf("newNode (addr): %x\n", newNode);
 	return newNode; // borrowed
 }
 
-void insert(List *collection, Record Data)
+
+void insert(Record Data)
 {	
 	//Node *mem = NULL;
 	if (head == NULL) {
 		head = createNode(Data);
 		traverse = head;
+		//printf("head (addr): %x\n", head);
+		//printf("traverse (addr): %x\n", traverse);
+		putchar('\n');
+	} else {
+		traverse->next = createNode(Data);
+		traverse = traverse->next;
+		//printf("traverse (addr): %x\n\n", traverse);
 	}
-
 }
+
 
 void Print(Node *list)
 {
 	while(list != NULL) {
-	
+	///*
 		printf("Artist: %s\n", list->Data.artist);
 		printf("Album: %s\n", list->Data.album_title);
 		printf("Song: %s\n", list->Data.song_title);
@@ -95,7 +102,7 @@ void Print(Node *list)
 		printf("%d\n", list->Data.song_length.seconds);
 		printf("Times Played: %d\n", list->Data.times_played);
 		printf("Rating: %d\n", list->Data.rating);
-	
+	//*/
 		//printf("list (addr): %x\n", list);
 		list = list->next;
 		putchar('\n');
