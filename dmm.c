@@ -90,7 +90,7 @@ void insert(Record Data)
 }
 
 
-void Print(Node *list)
+void display(Node *list)
 {
 	while(list != NULL) {
 	///*
@@ -102,8 +102,7 @@ void Print(Node *list)
 		printf("%d\n", list->Data.song_length.seconds);
 		printf("Times Played: %d\n", list->Data.times_played);
 		printf("Rating: %d\n", list->Data.rating);
-	//*/
-		//printf("list (addr): %x\n", list);
+
 		list = list->next;
 		putchar('\n');
 	}

@@ -25,7 +25,7 @@ int main(void)
 	 */
 	while (fgets(line,100,infile) != NULL) {
 
-		// Artist name field
+		/* Artist name field */
 		token = strtok(line, ",");
 		if (token != NULL) {
 		
@@ -59,11 +59,11 @@ int main(void)
 		}
 		
 		/* Song length field */
-		token = strtok(NULL, ":"); // length in minutes
+		token = strtok(NULL, ":"); //<-- length in minutes
 		if (token != NULL) {
 			Data.song_length.minutes = atoi(token);
 			
-			token = strtok(NULL, ","); // length in seconds
+			token = strtok(NULL, ","); //<-- length in seconds
 			if (token != NULL) {
 				Data.song_length.seconds = atoi(token);
 			}
@@ -86,7 +86,7 @@ int main(void)
 
 	Node *browse;
 	browse = head;
-	Print(browse);
+	display(browse);
 	
 	
 	

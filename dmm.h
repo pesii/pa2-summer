@@ -41,7 +41,7 @@ struct node *test;
 void print_menu();
 void load();
 void insert();
-void Print();
+void display();
 char *concatenate();
 char *checkArtistName();
 Node *createNode();
