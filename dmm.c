@@ -21,24 +21,6 @@ void print_menu(void)
 
 }
 
-/* Takes two strings as argument, concatenates them and returns a string
- */
-char *concatenate(char *str1, char *str2)
-{
-	char *joined_string;
-	int terminating_char = 1;
-	
-	// allocates enough space to fit the two strings
-	joined_string = malloc( strlen(str1) + strlen(str2) + terminating_char );
-	
-	strcpy( joined_string, str1 );
-	// don't overwrite str1 with str2, but write str2 after str1
-	strcpy( joined_string + strlen(str1), str2 );
-	
-	
-	return joined_string;
-}
-
 /* Some of this function's code was borrowed from lecture codes called LinkedList3
  * posted on eecs.wsu.edu/~aofallon by the instructor.
  * I'll make my own implementation once I'm comfortable with linked list and dynamic memory
@@ -55,7 +37,9 @@ Node *createNode(Record newRecord) // borrowed
 	newNode = malloc(sizeof(*newNode));
 	if (newNode != NULL) {
 		//Store our data to the linked list
-		//newNode->next = NULL; // This line in particular was borrowed
+		//newNode->next = NULL; // Init next node to be null unless space is allocated
+		//newNode->next = head;
+		
 		newNode->Data.artist = newRecord.artist; // These were not.
 		newNode->Data.album_title = newRecord.album_title;
 		newNode->Data.song_title = newRecord.song_title;
@@ -73,41 +57,204 @@ Node *createNode(Record newRecord) // borrowed
 }
 
 
-void insert(Record Data)
-{	
-	//Node *mem = NULL;
-	if (head == NULL) {
-		head = createNode(Data);
-		traverse = head;
-		//printf("head (addr): %x\n", head);
-		//printf("traverse (addr): %x\n", traverse);
-		putchar('\n');
-	} else {
-		traverse->next = createNode(Data);
-		traverse = traverse->next;
-		//printf("traverse (addr): %x\n\n", traverse);
-	}
-}
-
-
-void display(Node *list)
+void insertFront(Record input_data)
 {
-	while(list != NULL) {
-	///*
-		printf("Artist: %s\n", list->Data.artist);
-		printf("Album: %s\n", list->Data.album_title);
-		printf("Song: %s\n", list->Data.song_title);
-		printf("Genre: %s\n", list->Data.genre);
-		printf("Length: %d:", list->Data.song_length.minutes);
-		printf("%d\n", list->Data.song_length.seconds);
-		printf("Times Played: %d\n", list->Data.times_played);
-		printf("Rating: %d\n", list->Data.rating);
-
-		list = list->next;
-		putchar('\n');
+	Node *temp = NULL;
+	
+	if (head == NULL) {
+		head = createNode(input_data);
+		traverse = head;
+	} else {
+		temp = head;
+		head = createNode(input_data);
+		head->next = temp;
 	}
 }
 
+
+void print_node(Node *list, char print_type)
+{
+	if (print_type == PRINT_ALL) {
+		int i = 1;
+		while(list != NULL) {
+			printf("Song %d:\n", i);
+			printf("\tArtist: %s\n", list->Data.artist);
+			printf("\tAlbum: %s\n", list->Data.album_title);
+			printf("\tSong: %s\n", list->Data.song_title);
+			printf("\tGenre: %s\n", list->Data.genre);
+			printf("\tLength: %d:", list->Data.song_length.minutes);
+			printf("%d\n", list->Data.song_length.seconds);
+			printf("\tTimes Played: %d\n", list->Data.times_played);
+			printf("\tRating: %d\n", list->Data.rating);
+			
+			list = list->next;
+			putchar('\n');
+			i++;
+		}
+	} else if (print_type == PRINT_ONE) {
+		printf("\tArtist: %s\n", list->Data.artist);
+		printf("\tAlbum: %s\n", list->Data.album_title);
+		printf("\tSong: %s\n", list->Data.song_title);
+		printf("\tGenre: %s\n", list->Data.genre);
+		printf("\tLength: %d:", list->Data.song_length.minutes);
+		printf("%d\n", list->Data.song_length.seconds);
+		printf("\tTimes Played: %d\n", list->Data.times_played);
+		printf("\tRating: %d\n", list->Data.rating);
+	} else {
+		printf("Failed to select a print type\n");
+	}
+}
+
+void load(char *filename)
+{
+	FILE *infile = NULL;
+	char *token, line[100];
+	Record Data;
+	
+	infile = fopen(filename, "r");
+	if(infile == NULL) {
+		printf("Error\n");
+		exit(1);
+	}
+
+	/* while(!feof(file)) enters the loop an extra time than I like
+	 * while(fgets()) does the job better as it exits once it can't read any more lines
+	 */
+	while (fgets(line,100,infile) != NULL) {
+
+		/* Artist name field */
+		token = strtok(line, ",");
+		if (token != NULL) {
+		
+			char *portionNameOne;
+			portionNameOne = strdup(token);
+		
+			/* Checks artist name if there's a second delimiter */
+			Data.artist = checkArtistName(token);
+			if(Data.artist == NULL) {
+				Data.artist = strdup(portionNameOne);
+			}
+		}
+		
+		
+		/* Album name field */
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			Data.album_title = strdup(token);
+		}
+		
+		/* Song title field */
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			Data.song_title = strdup(token);
+		}
+
+		/* Genre field */
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			Data.genre = strdup(token);
+		}
+		
+		/* Song length field */
+		token = strtok(NULL, ":"); //<-- length in minutes
+		if (token != NULL) {
+			Data.song_length.minutes = atoi(token);
+			
+			token = strtok(NULL, ","); //<-- length in seconds
+			if (token != NULL) {
+				Data.song_length.seconds = atoi(token);
+			}
+		}
+
+		/* Times played field */
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			Data.times_played = atoi(token);
+		}
+
+		/* Ratings field */
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			Data.rating = atoi(token);
+		}
+		
+		insertFront(Data);
+	}
+}
+
+/* Takes as argument the head pointer of the linked list
+ * then creates a file stream to write all the current records in the Linked List to
+ */
+void store(Node *linkedList_head) 
+{
+	Node *indexor = linkedList_head;
+	FILE *outFile = NULL;
+	
+	outFile = fopen("output.csv", "w");
+	// If NULL, exit, otherwise, do nothing and proceed on
+	(outFile != NULL) ? :exit(1);
+	
+	while (indexor != NULL) {
+		fprintf(outFile, "%s,%s,%s,%s,%d:%d,%d,%d\n",indexor->Data.artist, 
+													indexor->Data.album_title,
+													indexor->Data.song_title, 
+													indexor->Data.genre,
+													indexor->Data.song_length.minutes, 
+													indexor->Data.song_length.seconds,
+													indexor->Data.times_played, 
+													indexor->Data.rating);
+		indexor = indexor->next;
+	}
+}
+
+// Find a record by artist
+void edit(Node *linkedList_head) 
+{
+	Node *indexor = NULL;
+	int i = 0;
+	char artist[100];
+	
+	indexor = linkedList_head; 
+	
+	printf("Search records by artist\n");
+	printf("Enter artist name: ");
+	fgets(artist, 100, stdin);
+	
+	// Strip newline from stdin
+	if(artist[strlen(artist) - 1] == '\n'){
+		artist[strlen(artist) - 1] = '\0';
+	}
+	printf("You entered: %s\n", artist);
+	
+	i=1;
+	while (indexor != NULL) {
+		if( strcmp(indexor->Data.artist, artist) == 0 ) {
+			printf("Record %d:\n", i);
+			print_node(indexor, PRINT_ONE);
+			putchar('\n');
+			i++;
+		}
+		indexor = indexor->next;
+	}
+}
+
+/* Takes two strings as argument, concatenates them and returns a string
+ */
+char *concatenate(char *str1, char *str2)
+{
+	char *joined_string;
+	int terminating_char = 1;
+	
+	// allocates enough space to fit the two strings
+	joined_string = malloc( strlen(str1) + strlen(str2) + terminating_char );
+	
+	strcpy( joined_string, str1 );
+	// don't overwrite str1 with str2, but write str2 after str1
+	strcpy( joined_string + strlen(str1), str2 );
+	
+	
+	return joined_string;
+}
 
 /* Checks if the field Artist Name is separated  by a comma.
  * If so, it breaks the field into two, then concatenates them,
@@ -133,23 +280,5 @@ char *checkArtistName(char *name)
 		return NULL;
 	}
 }
-
-void load(char *filename)
-{
-	
-
-}
-
-
-/*
-	printf("Artist: %s\n", Data.artist);
-	printf("Album: %s\n", Data.album_title);
-	printf("Song: %s\n", Data.song_title);
-	printf("Genre: %s\n", Data.genre);
-	printf("Length: %d:", Data.song_length.minutes);
-	printf("%d\n", Data.song_length.seconds);
-	printf("Times Played: %d\n", Data.times_played);
-	printf("Rating: %d\n", Data.rating);
-*/
 
 

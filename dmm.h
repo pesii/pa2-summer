@@ -6,6 +6,8 @@
 #include <string.h> /* strtok, 			*/
 
 #define TERMINATING_CHARACTER_SPACE 1
+#define PRINT_ALL 'a'
+#define PRINT_ONE 'o'
 
 typedef struct duration 
 {
@@ -32,16 +34,18 @@ typedef struct node
 	struct node *next;
 } Node;
 
-
+/* Points to the front of the linked list */
 struct node *head;
 struct node *traverse;
-struct node *test;
-
+struct node *link;
 
 void print_menu();
 void load();
-void insert();
-void display();
+void store();
+void edit();
+void insertFront();
+void print_node(Node *, char);
+
 char *concatenate();
 char *checkArtistName();
 Node *createNode();
