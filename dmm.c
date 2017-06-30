@@ -207,11 +207,27 @@ void store(Node *linkedList_head)
 	}
 }
 
+Node *get_node_by_num(int node_number)
+{
+	Node *indexor = NULL;
+	int i;
+	
+	indexor = head;
+	
+	i = 0;
+	while(i < node_number) {
+		indexor = indexor->next;
+		i++;
+	}
+	
+	return indexor;
+}
+
 // Find a record by artist
 void edit(Node *linkedList_head) 
 {
-	Node *indexor = NULL;
-	int i = 0;
+	Node *indexor = NULL, *modified_node = NULL;
+	int i = 0, isArtist = 0;
 	char artist[100];
 	
 	indexor = linkedList_head; 
@@ -219,22 +235,34 @@ void edit(Node *linkedList_head)
 	printf("Search records by artist\n");
 	printf("Enter artist name: ");
 	fgets(artist, 100, stdin);
+	if(strcmp(artist, "\n") == 0){
+		printf("You didn't enter anything\n");
+		exit(1);
+	}
 	
 	// Strip newline from stdin
 	if(artist[strlen(artist) - 1] == '\n'){
 		artist[strlen(artist) - 1] = '\0';
 	}
-	printf("You entered: %s\n", artist);
 	
-	i=1;
+	i=0;
 	while (indexor != NULL) {
 		if( strcmp(indexor->Data.artist, artist) == 0 ) {
-			printf("Record %d:\n", i);
+			++i;
+			printf("Record # %d:\n", i);
 			print_node(indexor, PRINT_ONE);
-			putchar('\n');
-			i++;
+			
+			isArtist = 1;
 		}
 		indexor = indexor->next;
+	}
+	
+	if (i > 1) {
+		printf("Which record number would you like to edit?\n");
+	} else if (isArtist) {
+		modified_node = get_node_by_num(i+1);
+	} else {
+		printf("No such artist in the records\n");
 	}
 }
 
