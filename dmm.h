@@ -1,23 +1,31 @@
 #ifndef MUSIC_MANAGER
 #define MUSIC_MANAGER
-
-#include <stdio.h> 	/* printf, scanf, fgets 	*/
-#include <stdlib.h> /* malloc, 			*/
-#include <string.h> /* strtok, 			*/
-#include <unistd.h>
+/* NOTE-TO-SELF: Need to find a way to detect OS using preprocessor directive 
+ * so that right libraries are included before runtime
+ */
+#include <stdio.h> 	/* printf, scanf, fgets, sscanf */
+#include <stdlib.h> /* malloc, 					 	*/
+#include <string.h> /* strtok, strdup,				*/
+#include <unistd.h> /* sleep,						*/
 
 #define TERMINATING_CHARACTER_SPACE 1
 #define PRINT_ALL 'a'
 #define PRINT_ONE 'o'
 #define FILENAME "musicPlayList.csv"
 
+// works for linux, but not windows
 #define CLEAR_SCREEN system("clear")
 
 #define LOAD 1
 #define STORE 2
 #define DISPLAY 3
+#define INSERT 4
+#define DELETE 5
 #define EDIT 6
+#define SORT
+#define RATE
 #define PLAY 9
+#define SHUFFLE 10
 #define EXIT 11
 
 typedef struct duration 

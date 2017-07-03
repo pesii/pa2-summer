@@ -3,7 +3,7 @@
 /*
  * Pesi ~ Summer ~ CPTS122
  * All testing/debugging were done exlusively on a linux machine
- * Functionalities that aren't supported on Windows includes 'system("clear")'-type statements
+ * Functionalities that aren't supported on Windows includes 'system("clear")'-type statements and unistd.h header
  * 
  * The goal behind this was to get a working code that satisfies most of the assignment's rubric
  * As a result, little regards were given to assuring efficiency/neatness of code
@@ -133,7 +133,7 @@ void start_program(void)
 	}
 }
 
-void load(Record store)
+void load(Record add_data)
 {
 	FILE *infile = NULL;
 	infile = openFile();
@@ -153,9 +153,9 @@ void load(Record store)
 			portionNameOne = strdup(token);
 		
 			/* Checks artist name if there's a second delimiter */
-			store.artist = checkArtistName(token);
-			if(store.artist == NULL) {
-				store.artist = strdup(portionNameOne);
+			add_data.artist = checkArtistName(token);
+			if(add_data.artist == NULL) {
+				add_data.artist = strdup(portionNameOne);
 			}
 		}
 		
@@ -163,46 +163,48 @@ void load(Record store)
 		/* Album name field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			store.album_title = strdup(token);
+			add_data.album_title = strdup(token);
 		}
 		
 		/* Song title field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			store.song_title = strdup(token);
+			add_data.song_title = strdup(token);
 		}
 
 		/* Genre field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			store.genre = strdup(token);
+			add_data.genre = strdup(token);
 		}
 		
 		/* Song length field */
 		token = strtok(NULL, ":"); //<-- length in minutes
 		if (token != NULL) {
-			store.song_length.minutes = atoi(token);
+			add_data.song_length.minutes = atoi(token);
 			
 			token = strtok(NULL, ","); //<-- length in seconds
 			if (token != NULL) {
-				store.song_length.seconds = atoi(token);
+				add_data.song_length.seconds = atoi(token);
 			}
 		}
 
 		/* Times played field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			store.times_played = atoi(token);
+			add_data.times_played = atoi(token);
 		}
 
 		/* Ratings field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			store.rating = atoi(token);
+			add_data.rating = atoi(token);
 		}
 		
-		insertFront(store);
+		insertFront(add_data);
 	}
+	
+	fclose(infile); // close file
 }
 
 int insertFront(Record input_data)
@@ -321,11 +323,13 @@ void store(Node *linkedList_head)
 	
 	while (indexor != NULL) {
 		fprintf(outFile, "%s,%s,%s,%s,%d:%d,%d,%d\n",indexor->Data.artist, indexor->Data.album_title,
-											indexor->Data.song_title, indexor->Data.genre,
-											indexor->Data.song_length.minutes, indexor->Data.song_length.seconds,
-											indexor->Data.times_played, indexor->Data.rating);
+			indexor->Data.song_title, indexor->Data.genre,
+			indexor->Data.song_length.minutes, indexor->Data.song_length.seconds,
+			indexor->Data.times_played, indexor->Data.rating);
+			
 		indexor = indexor->next;
 	}
+	fclose(outFile);
 }
 
 Node *get_node_by_num(Node *list_head, int node_number)
@@ -466,6 +470,7 @@ void play(Node *song)
 		sleep(5);
 		playlist = playlist->next;
 	}
+	free(playlist);
 	printf("playlist ended!\n");
 	pause_exec();
 	
@@ -476,6 +481,7 @@ void play(Node *song)
 void exit_program(Node *list_root)
 {
 	store(list_root);
+	
 	exit(0);
 }
 
