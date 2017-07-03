@@ -2,9 +2,9 @@
 
 void print_menu(void)
 {
-	printf("# # # # # # # # # # # # # \n");
-	printf("Digital Music Manager\n");
-	printf("# # # # # # # # # # # # # \n\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("| Digital Music Manager |\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 
 	printf("Options:\n");
 	printf("\t1: Load\n");
@@ -18,7 +18,88 @@ void print_menu(void)
 	printf("\t9: Play\n");
 	printf("\t10: Shuffle\n");
 	printf("\t11: Exit\n");
+	printf(">> ");
+}
 
+void pause_exec(void)
+{
+	char c;
+	printf("Press any key to continue...\n");
+	c = getchar();
+}
+
+void start_program(void)
+{
+	int choice = 0;
+	char input_validation[5];
+	Record playlist_data;
+	Node *user_defined = NULL;
+	
+	while(1) {
+		
+		print_menu();
+		
+		fgets(input_validation, 5, stdin);
+		sscanf(input_validation, " %d", &choice);
+	
+		if(choice == LOAD) {
+			load(playlist_data);
+			printf("Playlist loaded!\n");
+		
+		} else if (choice == STORE) {
+			store(head);
+		
+		} else if (choice == DISPLAY) {
+		
+			if (head == NULL) {
+				printf("No playlist has been loaded... try loading a playlist first!\n");
+			} else {
+				print_node(head, PRINT_ALL);
+			}
+			
+		} else if (choice == 4) {
+			
+		
+		} else if (choice == 5) {
+		
+		} else if (choice == EDIT) {
+			Node *modifiedNode = NULL; 
+			modifiedNode = get_node_edit();
+			if (modifiedNode != NULL) {
+				edit_prompt(modifiedNode);
+			}
+			
+		} else if (choice == 7) {
+		
+		} else if (choice == 8) {
+		
+		} else if (choice == PLAY) {
+			if (head != NULL) {
+				print_node(head, PRINT_ALL);
+			
+				Node *song;
+				int song_num = 0;
+				printf("Which song # do you want to play? ");
+				scanf(" %d", &song_num);
+				song = get_node_by_num(song_num);
+				if (song != NULL) {
+					play(song);
+				}
+			} else {
+				printf("Your playlist is empty... try loading it!\n");
+			}
+		
+		} else if (choice == 10) {
+			
+		} else if (choice == EXIT) {
+			printf("Saving list and terminating...\n");
+			exit_program(head);
+		} else {
+			printf("Invalid input... try again!\n");
+		}
+		choice = 0; // resets choice
+		pause_exec();
+	}
 }
 
 /* Some of this function's code was borrowed from lecture codes called LinkedList3
@@ -57,9 +138,10 @@ Node *createNode(Record newRecord) // borrowed
 }
 
 
-void insertFront(Record input_data)
+int insertFront(Record input_data)
 {
 	Node *temp = NULL;
+	int success = 0;
 	
 	if (head == NULL) {
 		head = createNode(input_data);
@@ -68,12 +150,17 @@ void insertFront(Record input_data)
 		temp = head;
 		head = createNode(input_data);
 		head->next = temp;
+		
+		(head != NULL)?(success=1):(success=0);
 	}
+	return success;
 }
 
 
-void print_node(Node *list, char print_type)
+void print_node(Node *list_index, char print_type)
 {
+	Node *list = list_index;
+	
 	if (print_type == PRINT_ALL) {
 		int i = 1;
 		while(list != NULL) {
@@ -105,17 +192,25 @@ void print_node(Node *list, char print_type)
 	}
 }
 
-void load(char *filename)
+FILE *openFile(void)
 {
 	FILE *infile = NULL;
-	char *token, line[100];
-	Record Data;
 	
-	infile = fopen(filename, "r");
+	infile = fopen(FILENAME, "r");
 	if(infile == NULL) {
 		printf("Error\n");
 		exit(1);
 	}
+	
+	return infile;
+}
+
+void load(Record store)
+{
+	FILE *infile = NULL;
+	infile = openFile();
+	
+	char *token, line[100];
 
 	/* while(!feof(file)) enters the loop an extra time than I like
 	 * while(fgets()) does the job better as it exits once it can't read any more lines
@@ -130,9 +225,9 @@ void load(char *filename)
 			portionNameOne = strdup(token);
 		
 			/* Checks artist name if there's a second delimiter */
-			Data.artist = checkArtistName(token);
-			if(Data.artist == NULL) {
-				Data.artist = strdup(portionNameOne);
+			store.artist = checkArtistName(token);
+			if(store.artist == NULL) {
+				store.artist = strdup(portionNameOne);
 			}
 		}
 		
@@ -140,45 +235,45 @@ void load(char *filename)
 		/* Album name field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			Data.album_title = strdup(token);
+			store.album_title = strdup(token);
 		}
 		
 		/* Song title field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			Data.song_title = strdup(token);
+			store.song_title = strdup(token);
 		}
 
 		/* Genre field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			Data.genre = strdup(token);
+			store.genre = strdup(token);
 		}
 		
 		/* Song length field */
 		token = strtok(NULL, ":"); //<-- length in minutes
 		if (token != NULL) {
-			Data.song_length.minutes = atoi(token);
+			store.song_length.minutes = atoi(token);
 			
 			token = strtok(NULL, ","); //<-- length in seconds
 			if (token != NULL) {
-				Data.song_length.seconds = atoi(token);
+				store.song_length.seconds = atoi(token);
 			}
 		}
 
 		/* Times played field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			Data.times_played = atoi(token);
+			store.times_played = atoi(token);
 		}
 
 		/* Ratings field */
 		token = strtok(NULL, ",");
 		if (token != NULL) {
-			Data.rating = atoi(token);
+			store.rating = atoi(token);
 		}
 		
-		insertFront(Data);
+		insertFront(store);
 	}
 }
 
@@ -196,13 +291,13 @@ void store(Node *linkedList_head)
 	
 	while (indexor != NULL) {
 		fprintf(outFile, "%s,%s,%s,%s,%d:%d,%d,%d\n",indexor->Data.artist, 
-													indexor->Data.album_title,
-													indexor->Data.song_title, 
-													indexor->Data.genre,
-													indexor->Data.song_length.minutes, 
-													indexor->Data.song_length.seconds,
-													indexor->Data.times_played, 
-													indexor->Data.rating);
+												indexor->Data.album_title,
+												indexor->Data.song_title, 
+												indexor->Data.genre,
+												indexor->Data.song_length.minutes, 
+												indexor->Data.song_length.seconds,
+												indexor->Data.times_played, 
+												indexor->Data.rating);
 		indexor = indexor->next;
 	}
 }
@@ -217,9 +312,8 @@ Node *get_node_by_num(int node_number)
 	i = 1;
 	while(i < node_number) {
 		indexor = indexor->next;
-		if (indexor == NULL) {
-			printf("Error retrieving record # %d. Check if node exists\n", node_number);
-			exit(1);
+		if(indexor == NULL) {
+			break;
 		}
 		i++;
 	}
@@ -228,12 +322,13 @@ Node *get_node_by_num(int node_number)
 }
 
 // Find a record by artist
-Node *get_node_edit(Node *linkedList_head) 
+Node *get_node_edit(void) 
 {
-	Node *indexor = NULL, *modified_node = NULL;
+	Node *indexor = NULL, *modified_node = NULL, *linkedList_head = NULL;
 	int isRecordOverOne=0, isArtist=0, singleNode=0, i=0;
 	char artist[100];
 	
+	linkedList_head = head;
 	indexor = linkedList_head; 
 	
 	printf("Enter artist name: ");
@@ -276,6 +371,70 @@ Node *get_node_edit(Node *linkedList_head)
 	}
 	
 	return modified_node;
+}
+
+void edit_prompt(Node *edit)
+{	
+	printf("Edit attributes: \n");
+	print_node(edit, PRINT_ONE);
+	
+}
+
+void rate(Node *changedNode)
+{
+	int new_rating = 0;
+	char input[4];
+	
+	printf("Enter a new rating (1-5): ");
+	
+	fgets(input, 2, stdin);
+	sscanf(input, " %d", &new_rating);
+	
+	switch (new_rating) {
+		case 1:
+			changedNode->Data.rating = 1;
+			break;
+		case 2:
+			changedNode->Data.rating = 2;
+			break;
+		case 3:
+			changedNode->Data.rating = 3;
+			break;
+		case 4:
+			changedNode->Data.rating = 4;
+			break;
+		case 5:
+			changedNode->Data.rating = 5;
+			break;
+		default:
+			printf("INVALID INPUT: ratings field... no changes made\n");
+			break;
+	}
+}
+
+void play(Node *song)
+{
+	Node *playlist = song;
+	
+	while(playlist != NULL) {
+		system("clear");
+		printf("Now playing...\n");
+		
+		print_node(playlist, PRINT_ONE);
+		sleep(5);
+		playlist = playlist->next;
+	}
+	printf("playlist ended!\n");
+	pause_exec();
+	
+	
+}
+
+/* Save the LinkedList to output.csv and terminate */
+void exit_program(Node *list_root)
+{
+	store(list_root);
+	exit(0);
 }
 
 /* Takes two strings as argument, concatenates them and returns a string

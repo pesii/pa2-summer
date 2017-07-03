@@ -3,13 +3,9 @@
 int main(void) 
 {
 	
+	start_program();
 	
-	load("musicPlayList.csv");
-	Node *test = head;
-	//print_node(test, PRINT_ALL);
-
-	get_node_edit(test);
-
+	return 0;
 	
 	
 }

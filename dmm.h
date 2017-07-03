@@ -4,10 +4,19 @@
 #include <stdio.h> 	/* printf, scanf, fgets 	*/
 #include <stdlib.h> /* malloc, 			*/
 #include <string.h> /* strtok, 			*/
+#include <unistd.h>
 
 #define TERMINATING_CHARACTER_SPACE 1
 #define PRINT_ALL 'a'
 #define PRINT_ONE 'o'
+#define FILENAME "musicPlayList.csv"
+
+#define LOAD 1
+#define STORE 2
+#define DISPLAY 3
+#define EDIT 6
+#define PLAY 9
+#define EXIT 11
 
 typedef struct duration 
 {
@@ -37,15 +46,21 @@ typedef struct node
 /* Points to the front of the linked list */
 struct node *head;
 struct node *traverse;
-struct node *link;
 
 void print_menu();
 void load();
 void store();
 Node *get_node_edit();
-void insertFront();
+Node *get_node_by_num();
+void rate();
+void play();
+void start_program();
+void edit_prompt();
+void pause_exec();
+int insertFront();
 void print_node(Node *, char);
 
+void exit_program();
 char *concatenate();
 char *checkArtistName();
 Node *createNode();
