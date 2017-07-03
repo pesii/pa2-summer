@@ -42,7 +42,7 @@ struct node *link;
 void print_menu();
 void load();
 void store();
-void edit();
+Node *get_node_edit();
 void insertFront();
 void print_node(Node *, char);
 

@@ -8,7 +8,7 @@ int main(void)
 	Node *test = head;
 	//print_node(test, PRINT_ALL);
 
-	edit(test);
+	get_node_edit(test);
 
 	
 	
