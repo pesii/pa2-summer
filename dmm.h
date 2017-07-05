@@ -22,8 +22,8 @@
 #define INSERT 4
 #define DELETE 5
 #define EDIT 6
-#define SORT
-#define RATE
+#define SORT 7
+#define RATE 8
 #define PLAY 9
 #define SHUFFLE 10
 #define EXIT 11
@@ -71,12 +71,14 @@ Node *get_node_by_num();
 Bool isListEmpty(Node *list_head);
 void pause_exec();
 void load();
-void store();
+int store();
+int deleteNode();
+Record newRecord(void);
 void rate();
 void play();
 void start_program();
 void edit_prompt();
-int insertFront();
+int insertRecordFront();
 
 int input_validation_int();
 char *input_validation_str();
