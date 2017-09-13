@@ -1,20 +1,20 @@
 #ifndef MUSIC_MANAGER
 #define MUSIC_MANAGER
-/* NOTE-TO-SELF: Need to find a way to detect OS using preprocessor directive 
- * so that right libraries are included before runtime
- */
+/* NOTE-TO-SELF: Need to find a way to detect OS using preprocessor directive
+* so that right libraries are included before runtime
+*/
 #include <stdio.h> 	/* printf, scanf, fgets, sscanf */
 #include <stdlib.h> /* malloc, 					 	*/
 #include <string.h> /* strtok, strdup,				*/
-#include <unistd.h> /* sleep,						*/
+#include <Windows.h> /* Sleep						*/			
+//#include <unistd.h> /* sleep, this library is for *nix only	*/
 
 #define TERMINATING_CHARACTER_SPACE 1
 #define PRINT_ALL 'a'
 #define PRINT_ONE 'o'
 #define FILENAME "musicPlayList.csv"
 
-// works for linux, but not windows
-#define CLEAR_SCREEN system("clear")
+#define CLEAR_SCREEN system("cls")
 
 #define LOAD 1
 #define STORE 2
@@ -28,13 +28,13 @@
 #define SHUFFLE 10
 #define EXIT 11
 
-typedef struct duration 
+typedef struct duration
 {
 	int minutes;
 	int seconds;
 } Duration;
 
-typedef struct record 
+typedef struct record
 {
 	char *artist;
 	char *album_title;
@@ -58,36 +58,34 @@ struct node *head;
 
 typedef enum boolean
 {
-	false, true
+	False, True
 } Bool;
 
 
 
-void print_menu();
-void print_node(Node *, char);
-
-Node *get_node_edit();
-Node *get_node_by_num();
+void print_menu(void);
+void pause_exec(void);
+int input_validation_int(void);
 Bool isListEmpty(Node *list_head);
-void pause_exec();
+void start_program(void);
 void load();
-int store();
-int deleteNode();
-Record newRecord(void);
-void rate();
-void play();
-void start_program();
-void edit_prompt();
-int insertRecordFront();
+int insertRecordFront(Record input_data);
+Record insert_record(void);
+Node *createNode(Record insert_record); // borrowed
+void print_node(Node *list_index, char print_type);
+FILE *open_file(void);
+int store(Node *linkedList_head);
+Node *get_node_by_num(Node *list_head, int node_number);
+char *input_validation_str(void);
+Node *get_node_edit(Node *list_head);
+void edit_prompt(Node *edit);
+void rate(Node *changedNode);
 
-int input_validation_int();
-char *input_validation_str();
-
-FILE *openFile();
-void exit_program();
-char *concatenate();
-char *checkArtistName();
-Node *createNode();
+void play(Node *song);
+int deleteNode(Node *list_head);
+void exit_program(Node *list_root);
+char *concatenate(char *str1, char *str2);
+char *checkArtistName(char *name);
 
 
 #endif
